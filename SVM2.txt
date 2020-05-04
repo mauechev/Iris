@@ -1,0 +1,30 @@
+setwd("D:/Documents/Desktop/Model2/Modelo Lunes 10 OCT/Predicciones SVM_2")
+library(e1071)
+library(kernlab)
+-------------------------------------------------------------------------------
+# 1- BD_1
+
+BD_1 <- read.csv("BD_1.csv", header = T, sep = ";", dec = ".")
+
+BD_1[3,]
+
+str(BD_1)
+
+index1 <- 1:nrow(BD_1)
+
+testindex1 <- sample(index1, trunc(length(index1)/3))
+
+testset1 <- BD_1[testindex1,]
+
+trainset1 <- BD_1[-testindex1,]
+
+
+spammodel1 <- ksvm(ESTADO.TARJETA ~ ., data = trainset1[,-1], type = "C-bsvc", kernel = "rbfdot", C = 1000, prob.model = TRUE)
+
+****
+pred1<-predict(spammodel1, BD_1, type = "probabilities")
+
+predict1<-cbind(pred1,BD_1)
+write.csv(predict1, file = "PredictBD_2.csv")
+
+plot(perf1)

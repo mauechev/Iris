@@ -1,0 +1,51 @@
+setwd("D:/Documents/Desktop/Model2/Modelo Lunes 10 OCT/Predicciones REG LOG y BAYES")
+library(e1071)
+library(stats)
+
+
+-------------------------------------------------------------------------------
+# 1- BD_1
+
+BD_1 <- read.csv("BD_1_reg2.csv", header = T, sep = ";", dec = ".")
+
+str(BD_1)
+
+# Divide set en Train y Test 
+muestra         <- sample(nrow(BD_1),nrow(BD_1)*.3)
+Train           <- BD_1[-muestra,]
+Test            <- BD_1[muestra,]
+length(muestra) 
+
+length(BD_1[,3])
+Train[1,]
+
+#----------------------------------------------------------------------------------
+# Crea modelo predictivo 
+Modelo_glm      <- glm(ESTADO.TARJETA ~., Train[,-1], family = binomial(link="logit"))
+summary(Modelo_glm)
+anova(modelo1, modelo2, test = "Chi")
+ 
+#----------------------------------------------------------------------------------
+# Hace prediccion y crea matriz confucion 
+Prediccion      <- round(predict(Modelo_glm, newdata = BD_1, type = "response"))
+MC              <- table(Test[, "ESTADO.TARJETA"],Prediccion)   # Matriz de Confusión
+Prediccion      <- predict(Modelo_glm, newdata = BD_1, type = "response")
+
+predict11<-cbind(Prediccion,BD_1)
+write.csv(predict11, file = "PredictBD_11.csv")
+
+
+______________________________________________________________________________
+
+model <- naiveBayes(ESTADO.TARJETA ~., data = Train[,-1])
+ 
+# Importancia de cada variable
+model$importance
+ 
+# predict necesita el parámetro newdata
+results <- predict(object = model, newdata=Test, type = "class")
+ 
+mc <- table(results,Test[,3])
+ 
+# Correctamente clasificados
+100 * sum(diag(mc)) / sum(mc)
